@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOEIC 單字語音特訓機 (完整版)</title>
+    <style>
+        body {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+        .container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .header-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            color: #666;
+            font-size: 0.9em;
+        }
+        .badge {
+            background-color: #007bff;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+        }
+        .progress-counter {
+            font-weight: bold;
+            color: #555;
+        }
+        .question-text {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin: 20px 0 30px 0;
+            color: #2c3e50;
+        }
+        .answer-area {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            display: none; /* 預設隱藏 */
+            text-align: left;
+            position: relative;
+        }
+        .english-word {
+            font-size: 1.8em;
+            color: #d63031;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .sentence {
+            font-size: 1.2em;
+            color: #555;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        .tip {
+            font-size: 0.95em;
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 8px 12px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+        .btn-group {
+            margin-top: 30px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        button {
+            padding: 12px 20px;
+            font-size: 1em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.1s, background 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        button:active { transform: scale(0.98); }
+        .btn-show { background-color: #28a745; color: white; width: 100%; }
+        .btn-show:hover { background-color: #218838; }
+        .btn-next { background-color: #007bff; color: white; flex: 1; }
+        .btn-next:hover { background-color: #0069d9; }
+        .btn-unknown { background-color: #6c757d; color: white; flex: 1; }
+        .btn-unknown:hover { background-color: #5a6268; }
+        .btn-speak { 
+            background-color: #ffc107; 
+            color: #333; 
+            margin-bottom: 15px;
+            font-weight: bold;
+            width: 100%;
+        }
+        .btn-speak:hover { background-color: #e0a800; }
+        .interaction-area { display: none; }
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 5px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-size: 17px;
+            opacity: 0;
+            transition: opacity 0.5s, bottom 0.5s;
+        }
+        #toast.show { visibility: visible; opacity: 1; bottom: 50px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-info">
+        <span id="category" class="badge">Unit 1</span>
+        <span id="counter" class="progress-counter">Loading...</span>
+    </div>
+
+    <div id="zh" class="question-text">載入中...</div>
+    
+    <div id="answer-box" class="answer-area">
+        <div id="en-word" class="english-word"></div>
+        <div id="en-sentence" class="sentence"></div>
+        <button class="btn-speak" onclick="speakText()">🔊 播放發音 (Listen)</button>
+        <div id="en-tip" class="tip"></div>
+    </div>
+
+    <div class="btn-group">
+        <button id="btn-reveal" class="btn-show" onclick="showAnswer()">👀 看答案</button>
+        <div id="action-btns" class="interaction-area" style="display:none; width:100%; display:flex; gap:10px;">
+            <button class="btn-unknown" onclick="markUnknown()">🤯 我不會 (稍後再練)</button>
+            <button class="btn-next" onclick="nextQuestion()">✅ 我會了 (下一題)</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast">已加入「待複習」清單，稍後再戰！💪</div>
+
+<script>
+    // 完整資料庫 Unit 1 - Unit 4
+    const initialQuestions = [
+        // Unit 1
+        { cat: "Unit 1: Office", zh: "夾板", word: "clipboard (n.)", sentence: "Please sign the form on the clipboard.", tip: "sign + form 文件簽名" },
+        { cat: "Unit 1: Office", zh: "迴紋針", word: "paper clip (n.)", sentence: "Attach the receipt with a paper clip.", tip: "attach A with B 用B把A夾起來" },
+        { cat: "Unit 1: Office", zh: "檔案櫃", word: "file cabinet (n.)", sentence: "The contracts are stored in the file cabinet.", tip: "be stored in 存放在" },
+        { cat: "Unit 1: Office", zh: "活頁夾", word: "binder (n.)", sentence: "Keep the reports in a binder for easy reference.", tip: "for reference 供查閱" },
+        { cat: "Unit 1: Office", zh: "印章", word: "stamp (n./v.)", sentence: "Please stamp the document before you send it.", tip: "before + S + V 流程順序" },
+        { cat: "Unit 1: Office", zh: "墨水匣", word: "ink cartridge (n.)", sentence: "We need to replace the ink cartridge in the printer.", tip: "replace A in B 更換B裡的A" },
+        { cat: "Unit 1: Office", zh: "螢幕", word: "monitor (n.)", sentence: "The data is displayed on the monitor.", tip: "be displayed on 顯示於" },
+        { cat: "Unit 1: Office", zh: "鍵盤", word: "keyboard (n.)", sentence: "The keyboard isn’t working properly.", tip: "work properly 運作正常" },
+        { cat: "Unit 1: Office", zh: "印表機", word: "printer (n.)", sentence: "The printer is out of paper.", tip: "be out of + N 用完" },
+        { cat: "Unit 1: Office", zh: "碎紙機", word: "paper shredder (n.)", sentence: "Use the paper shredder to dispose of sensitive files.", tip: "dispose of 處理/丟棄" },
+        { cat: "Unit 1: Office", zh: "文件", word: "document (n.)", sentence: "Please review the document before approval.", tip: "before approval 核准前" },
+        { cat: "Unit 1: Office", zh: "計算機", word: "calculator (n.)", sentence: "Use a calculator to check the total.", tip: "check the total 核對總額" },
+        { cat: "Unit 1: Office", zh: "投影機", word: "projector (n.)", sentence: "We’ll set up the projector for the meeting.", tip: "set up 架設/準備" },
+        { cat: "Unit 1: Office", zh: "月曆", word: "calendar (n.)", sentence: "Please mark the deadline on your calendar.", tip: "mark the deadline 標註截止日" },
+        { cat: "Unit 1: Office", zh: "隔間辦公室", word: "cubicle (n.)", sentence: "He works in a cubicle near the window.", tip: "work in 工作地點" },
+        { cat: "Unit 1: Office", zh: "會議室", word: "conference room (n.)", sentence: "The conference room is reserved until 3 p.m.", tip: "be reserved until 預約到…" },
+        { cat: "Unit 1: Office", zh: "試算表", word: "spreadsheet (n.)", sentence: "Update the spreadsheet with the latest figures.", tip: "update A with B 用B更新A" },
+        { cat: "Unit 1: Office", zh: "圖表", word: "chart (n.)", sentence: "The chart shows monthly sales growth.", tip: "show + 數據趨勢" },
+        { cat: "Unit 1: Office", zh: "遞送", word: "deliver (v.)", sentence: "The supplier will deliver the materials tomorrow.", tip: "deliver + 物品 + 時間" },
+        { cat: "Unit 1: Office", zh: "操作", word: "operate (v.)", sentence: "Only trained staff may operate the machine.", tip: "may + V 規範/允許" },
+        { cat: "Unit 1: Office", zh: "信封", word: "envelope (n.)", sentence: "Put the invoice in an envelope and mail it.", tip: "invoice 發票/帳單" },
+        { cat: "Unit 1: Office", zh: "發表演講", word: "make a speech (phr.)", sentence: "She will make a speech at the annual meeting.", tip: "at the annual meeting 常見公司情境" },
+        { cat: "Unit 1: Office", zh: "準備", word: "preparation (n.)", sentence: "With good preparation, the presentation will go smoothly.", tip: "go smoothly 進行順利" },
+        { cat: "Unit 1: Office", zh: "報告/簡報", word: "presentation (n.)", sentence: "His presentation starts at 10 a.m.", tip: "start at + time" },
+        { cat: "Unit 1: Office", zh: "退款", word: "refund (n./v.)", sentence: "The customer requested a refund for the defective item.", tip: "request a refund 申請退款" },
+        { cat: "Unit 1: Office", zh: "顧客", word: "customer (n.)", sentence: "Please respond to the customer within 24 hours.", tip: "within + 時間 SLA常見" },
+        { cat: "Unit 1: Office", zh: "改善", word: "improve (v.)", sentence: "We need to improve our service quality.", tip: "need to + V 建議/要求" },
+        { cat: "Unit 1: Office", zh: "餐廳", word: "restaurant (n.)", sentence: "The restaurant needs to improve its online reviews.", tip: "online reviews 商務常見字" },
+        { cat: "Unit 1: Office", zh: "會議", word: "meeting (n.)", sentence: "The meeting has been moved to Friday.", tip: "be moved to 改期到" },
+        { cat: "Unit 1: Office", zh: "期限", word: "deadline (n.)", sentence: "Please submit the report before the deadline.", tip: "submit the report 交報告" },
+
+        // Unit 2
+        { cat: "Unit 2: Travel", zh: "行李箱", word: "suitcase (n.)", sentence: "The airline lost my suitcase during the transfer.", tip: "airline lost + luggage 常見抱怨句" },
+        { cat: "Unit 2: Travel", zh: "走道", word: "aisle (n.)", sentence: "Could I have an aisle seat, please?", tip: "aisle seat / window seat" },
+        { cat: "Unit 2: Travel", zh: "點心", word: "snack (n.)", sentence: "Snacks are available on board.", tip: "available on board 機上用語" },
+        { cat: "Unit 2: Travel", zh: "登機門", word: "gate (n.)", sentence: "Please proceed to Gate 12 immediately.", tip: "proceed to + 地點 公告語氣" },
+        { cat: "Unit 2: Travel", zh: "毯子", word: "blanket (n.)", sentence: "Could you bring me a blanket?", tip: "Could you + V 禮貌請求" },
+        { cat: "Unit 2: Travel", zh: "護照", word: "passport (n.)", sentence: "Keep your passport in your carry-on bag.", tip: "keep A in B" },
+        { cat: "Unit 2: Travel", zh: "安檢", word: "security (n.)", sentence: "Remove your laptop at security.", tip: "at security＝在安檢處" },
+        { cat: "Unit 2: Travel", zh: "跑道", word: "runway (n.)", sentence: "The plane is waiting on the runway.", tip: "wait on 路線/表面" },
+        { cat: "Unit 2: Travel", zh: "飲料", word: "beverage (n.)", sentence: "Beverages will be served shortly.", tip: "will be served 被動＝服務流程" },
+        { cat: "Unit 2: Travel", zh: "渡輪", word: "ferry (n.)", sentence: "You need a ticket to ride the ferry.", tip: "need a ticket to + V" },
+        { cat: "Unit 2: Travel", zh: "登機證", word: "boarding pass (n.)", sentence: "Please show your boarding pass at the gate.", tip: "show + 證件" },
+        { cat: "Unit 2: Travel", zh: "行李提領處", word: "baggage claim (n.)", sentence: "Our luggage is at baggage claim carousel 5.", tip: "carousel 行李轉盤" },
+        { cat: "Unit 2: Travel", zh: "機場", word: "airport (n.)", sentence: "Arrive at the airport two hours early.", tip: "arrive + 時間提前" },
+        { cat: "Unit 2: Travel", zh: "旅館", word: "hotel (n.)", sentence: "We checked into the hotel at midnight.", tip: "check into 入住" },
+        { cat: "Unit 2: Travel", zh: "隨身行李", word: "carry-on (n./adj.)", sentence: "This bag counts as carry-on baggage.", tip: "count as 算作" },
+        { cat: "Unit 2: Travel", zh: "代理/櫃檯人員", word: "agent (n.)", sentence: "The agent rebooked my flight.", tip: "rebook 改訂機票" },
+        { cat: "Unit 2: Travel", zh: "航空公司", word: "airline (n.)", sentence: "Ryanair is a low-cost airline.", tip: "low-cost airline 常見搭配" },
+        { cat: "Unit 2: Travel", zh: "登上（交通工具）", word: "board (v.)", sentence: "We board the plane at three o’clock.", tip: "board + 交通工具" },
+        { cat: "Unit 2: Travel", zh: "預訂", word: "book (v.)", sentence: "I booked my flight on a travel website.", tip: "book + flight/hotel" },
+        { cat: "Unit 2: Travel", zh: "取消", word: "cancel (v.)", sentence: "I had to cancel my trip due to bad weather.", tip: "due to + N 原因" },
+        { cat: "Unit 2: Travel", zh: "報到", word: "check in (phr. v.)", sentence: "Let’s check in so we can go up to our room.", tip: "check in＝報到/入住" },
+        { cat: "Unit 2: Travel", zh: "海關", word: "customs (n.)", sentence: "The agent at customs looked in my suitcase.", tip: "at customs 固定搭配" },
+        { cat: "Unit 2: Travel", zh: "出發", word: "depart (v.)", sentence: "We depart from the hotel at 6 a.m.", tip: "depart from" },
+        { cat: "Unit 2: Travel", zh: "航班", word: "flight (n.)", sentence: "I’m taking a flight to Spain.", tip: "take a flight to" },
+        { cat: "Unit 2: Travel", zh: "行程表", word: "itinerary (n.)", sentence: "Our itinerary includes three days in Paris.", tip: "include + 天數/行程" },
+        { cat: "Unit 2: Travel", zh: "排隊", word: "line up (phr. v.)", sentence: "We need to line up at that desk to check in.", tip: "line up at" },
+        { cat: "Unit 2: Travel", zh: "乘客", word: "passenger (n.)", sentence: "The bus can take 30 passengers.", tip: "take + 人數 容納" },
+        { cat: "Unit 2: Travel", zh: "月台", word: "platform (n.)", sentence: "Our train leaves from platform 3.", tip: "leave from" },
+        { cat: "Unit 2: Travel", zh: "剩下/仍然", word: "remain (v.)", sentence: "Only three seats remain on this flight.", tip: "seats remain 常見公告" },
+        { cat: "Unit 2: Travel", zh: "訂位", word: "reservation (n.)", sentence: "Did you make a hotel reservation?", tip: "make a reservation" },
+
+        // Unit 3
+        { cat: "Unit 3: Shopping", zh: "條碼", word: "barcode (n.)", sentence: "The cashier scanned the barcode.", tip: "scan + barcode 收銀流程" },
+        { cat: "Unit 3: Shopping", zh: "顧客", word: "customer (n.)", sentence: "Customers can return items within 7 days.", tip: "within 7 days 退貨政策" },
+        { cat: "Unit 3: Shopping", zh: "價格", word: "price (n.)", sentence: "The price includes tax.", tip: "include tax 稅已含" },
+        { cat: "Unit 3: Shopping", zh: "展示", word: "display (n./v.)", sentence: "The new products are on display near the entrance.", tip: "on display 展示中" },
+        { cat: "Unit 3: Shopping", zh: "家具", word: "furniture (n.)", sentence: "The store sells office furniture.", tip: "office furniture TOEIC常見" },
+        { cat: "Unit 3: Shopping", zh: "架子", word: "rack (n.)", sentence: "Please place the items on the rack.", tip: "place A on B" },
+        { cat: "Unit 3: Shopping", zh: "標籤", word: "label (n./v.)", sentence: "The label shows the original price.", tip: "original price 原價" },
+        { cat: "Unit 3: Shopping", zh: "折扣", word: "discount (n.)", sentence: "You’ll get a 10% discount with this coupon.", tip: "get a discount" },
+        { cat: "Unit 3: Shopping", zh: "錢包", word: "wallet (n.)", sentence: "I left my wallet at home.", tip: "leave + 物品 + 地點" },
+        { cat: "Unit 3: Shopping", zh: "廚房用品", word: "kitchenware (n.)", sentence: "Kitchenware is on the second floor.", tip: "on the second floor 位置" },
+        { cat: "Unit 3: Shopping", zh: "購物", word: "shopping (n.)", sentence: "We went shopping after work.", tip: "go shopping" },
+        { cat: "Unit 3: Shopping", zh: "購物車", word: "shopping cart (n.)", sentence: "Put heavy items in the shopping cart.", tip: "put A in B" },
+        { cat: "Unit 3: Shopping", zh: "購物中心", word: "mall (n.)", sentence: "She wants to go to the mall.", tip: "want to + V" },
+        { cat: "Unit 3: Shopping", zh: "收銀員", word: "cashier (n.)", sentence: "The cashier asked for my membership card.", tip: "ask for 索取" },
+        { cat: "Unit 3: Shopping", zh: "收據", word: "receipt (n.)", sentence: "Keep the receipt for your records.", tip: "for your records 留存" },
+        { cat: "Unit 3: Shopping", zh: "可重複使用的", word: "reusable (adj.)", sentence: "Bring a reusable bag to reduce waste.", tip: "reduce waste 環保句" },
+        { cat: "Unit 3: Shopping", zh: "袋子", word: "bag (n.)", sentence: "The store charges for plastic bags.", tip: "charge for 收費" },
+        { cat: "Unit 3: Shopping", zh: "信用卡", word: "credit card (n.)", sentence: "Do you accept credit cards?", tip: "accept＝接受付款方式" },
+        { cat: "Unit 3: Shopping", zh: "可靠的", word: "reliable (adj.)", sentence: "Choose a reliable supplier for bulk orders.", tip: "supplier / bulk orders 商務採購" },
+        { cat: "Unit 3: Shopping", zh: "花費", word: "cost (v./n.)", sentence: "This model costs less than the previous one.", tip: "cost + 金額/比較" },
+        { cat: "Unit 3: Shopping", zh: "購買（過去分詞）", word: "purchased (adj./pp.)", sentence: "Purchased items are non-refundable.", tip: "non-refundable 不可退" },
+        { cat: "Unit 3: Shopping", zh: "負擔得起", word: "afford (v.)", sentence: "We can’t afford to buy in large quantities.", tip: "can’t afford to + V" },
+        { cat: "Unit 3: Shopping", zh: "出清特賣", word: "sale (n.)", sentence: "The store is having a sale this weekend.", tip: "have a sale" },
+        { cat: "Unit 3: Shopping", zh: "半價", word: "50% off (phr.)", sentence: "All jackets are 50% off today.", tip: "% off 折扣表達" },
+        { cat: "Unit 3: Shopping", zh: "原價", word: "original price (n.)", sentence: "The original price is listed on the tag.", tip: "be listed on 標示於" },
+        { cat: "Unit 3: Shopping", zh: "退貨", word: "return (v.)", sentence: "You may return the item with a receipt.", tip: "with a receipt 條件" },
+        { cat: "Unit 3: Shopping", zh: "退費", word: "refund (n./v.)", sentence: "Refunds will be issued in 5 business days.", tip: "be issued 核發/退回" },
+        { cat: "Unit 3: Shopping", zh: "供應商", word: "supplier (n.)", sentence: "The supplier confirmed the delivery date.", tip: "confirm + 日期" },
+        { cat: "Unit 3: Shopping", zh: "大量訂單", word: "bulk order (n.)", sentence: "We offer discounts for bulk orders.", tip: "offer discounts for" },
+        { cat: "Unit 3: Shopping", zh: "付款", word: "payment (n.)", sentence: "Payment is due upon receipt of the invoice.", tip: "due upon receipt 一收到就到期" },
+
+        // Unit 4
+        { cat: "Unit 4: Banking", zh: "保險箱", word: "safety deposit box (n.)", sentence: "Please store valuables in a safety deposit box.", tip: "store valuables 存放貴重物" },
+        { cat: "Unit 4: Banking", zh: "銀行櫃員", word: "bank teller (n.)", sentence: "The bank teller verified my ID.", tip: "verify ID 身分核對" },
+        { cat: "Unit 4: Banking", zh: "簽名", word: "signature (n.)", sentence: "Your signature is required on the form.", tip: "be required 必須" },
+        { cat: "Unit 4: Banking", zh: "支票", word: "check (n.)", sentence: "Please write a check payable to the company.", tip: "payable to 受款人" },
+        { cat: "Unit 4: Banking", zh: "銀行對帳單", word: "bank statement (n.)", sentence: "Review your bank statement for any unusual charges.", tip: "unusual charges 異常扣款" },
+        { cat: "Unit 4: Banking", zh: "存摺", word: "bankbook (n.)", sentence: "Bring your bankbook when you update your account.", tip: "update your account 更新帳戶資料" },
+        { cat: "Unit 4: Banking", zh: "現金", word: "cash (n.)", sentence: "Do you want cash or a transfer?", tip: "cash or transfer 常見選項題" },
+        { cat: "Unit 4: Banking", zh: "超支", word: "overspend (v.)", sentence: "Try not to overspend during the holidays.", tip: "during the holidays 時間片語" },
+        { cat: "Unit 4: Banking", zh: "提款", word: "withdraw (v.)", sentence: "You can withdraw cash from an ATM.", tip: "withdraw A from B" },
+        { cat: "Unit 4: Banking", zh: "自動提款機", word: "ATM (n.)", sentence: "The ATM is temporarily out of service.", tip: "out of service 暫停服務" },
+        { cat: "Unit 4: Banking", zh: "分行", word: "branch (n.)", sentence: "Please visit the nearest branch for assistance.", tip: "nearest branch 最近分行" },
+        { cat: "Unit 4: Banking", zh: "申請", word: "application (n.)", sentence: "Submit the loan application by Friday.", tip: "submit the application 送件" },
+        { cat: "Unit 4: Banking", zh: "帳單", word: "bill (n.)", sentence: "This bill includes service fees.", tip: "service fees 服務費" },
+        { cat: "Unit 4: Banking", zh: "金額", word: "amount (n.)", sentence: "Please enter the amount you want to transfer.", tip: "enter the amount 輸入金額" },
+        { cat: "Unit 4: Banking", zh: "貸款", word: "loan (n.)", sentence: "We’re talking about a loan for a new car.", tip: "a loan for + 目的" },
+        { cat: "Unit 4: Banking", zh: "簽署（文件）", word: "sign (v.)", sentence: "Please sign the forms in front of the officer.", tip: "sign the forms" },
+        { cat: "Unit 4: Banking", zh: "表格", word: "form (n.)", sentence: "Fill out this form in capital letters.", tip: "fill out 填寫" },
+        { cat: "Unit 4: Banking", zh: "申請表", word: "application form (n.)", sentence: "The application form is missing a signature.", tip: "be missing 缺少" },
+        { cat: "Unit 4: Banking", zh: "理財規劃師", word: "financial planner (n.)", sentence: "A financial planner can help you set a budget.", tip: "set a budget 設定預算" },
+        { cat: "Unit 4: Banking", zh: "被收費/被扣款", word: "charged (adj./pp.)", sentence: "You were charged twice for the same transaction.", tip: "charged twice 重複扣款" },
+        { cat: "Unit 4: Banking", zh: "櫃台", word: "counter (n.)", sentence: "Please take a number at the counter.", tip: "take a number 抽號碼牌" },
+        { cat: "Unit 4: Banking", zh: "利潤", word: "profit (n.)", sentence: "The company reported a profit increase this quarter.", tip: "report a profit increase 財報句" },
+        { cat: "Unit 4: Banking", zh: "簽署", word: "sign (n./v.)", sentence: "Please sign here and date it.", tip: "sign and date 簽名＋日期" },
+        { cat: "Unit 4: Banking", zh: "交易", word: "transaction (n.)", sentence: "This transaction was declined.", tip: "be declined 被拒絕/未核准" },
+        { cat: "Unit 4: Banking", zh: "轉帳", word: "transfer (n./v.)", sentence: "I’d like to transfer funds to another account.", tip: "transfer funds 轉移資金" },
+        { cat: "Unit 4: Banking", zh: "帳戶", word: "account (n.)", sentence: "Please open a savings account.", tip: "open an account 開戶" },
+        { cat: "Unit 4: Banking", zh: "存款", word: "deposit (n./v.)", sentence: "I’d like to deposit this check.", tip: "deposit a check 存支票" },
+        { cat: "Unit 4: Banking", zh: "費用", word: "fee (n.)", sentence: "A service fee may apply.", tip: "may apply 可能適用" },
+        { cat: "Unit 4: Banking", zh: "付款到期", word: "due (adj.)", sentence: "The payment is due on the 15th.", tip: "be due on + 日期" },
+        { cat: "Unit 4: Banking", zh: "幫助/協助", word: "assistance (n.)", sentence: "Contact the branch for further assistance.", tip: "for further 更進一步" }
+    ];
+
+    // 洗牌演算法 (Fisher-Yates Shuffle) - 確保每次題目順序都不一樣
+    function shuffle(array) {
+        let currentIndex = array.length, randomIndex;
+        while (currentIndex != 0) {
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex--;
+            [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+        }
+        return array;
+    }
+
+    // 將題目洗牌後放入執行佇列
+    let questions = shuffle([...initialQuestions]);
+    let currentQ = {};
+
+    // DOM 元素
+    const zhEl = document.getElementById('zh');
+    const catEl = document.getElementById('category');
+    const counterEl = document.getElementById('counter');
+    const ansBox = document.getElementById('answer-box');
+    const wordEl = document.getElementById('en-word');
+    const sentEl = document.getElementById('en-sentence');
+    const tipEl = document.getElementById('en-tip');
+    const btnReveal = document.getElementById('btn-reveal');
+    const actionBtns = document.getElementById('action-btns');
+
+    function loadQuestion() {
+        if (questions.length === 0) {
+            zhEl.textContent = "🎉 太棒了！全部練習完成！";
+            catEl.style.display = 'none';
+            ansBox.style.display = 'none';
+            btnReveal.style.display = 'none';
+            actionBtns.style.display = 'none';
+            counterEl.textContent = "剩餘題數: 0";
+            return;
+        }
+
+        currentQ = questions.shift(); 
+        
+        zhEl.textContent = currentQ.zh;
+        catEl.textContent = currentQ.cat;
+        
+        // 設定不同類型的顏色 (選用)
+        if(currentQ.cat.includes("Unit 1")) catEl.style.backgroundColor = "#007bff"; // 藍
+        else if(currentQ.cat.includes("Unit 2")) catEl.style.backgroundColor = "#28a745"; // 綠
+        else if(currentQ.cat.includes("Unit 3")) catEl.style.backgroundColor = "#e83e8c"; // 粉
+        else catEl.style.backgroundColor = "#fd7e14"; // 橘
+        
+        counterEl.textContent = `剩餘題數: ${questions.length + 1}`;
+        wordEl.textContent = currentQ.word;
+        sentEl.textContent = currentQ.sentence;
+        tipEl.textContent = `💡 用法提示：${currentQ.tip}`;
+        
+        ansBox.style.display = 'none';
+        btnReveal.style.display = 'block';
+        actionBtns.style.display = 'none';
+    }
+
+    function showAnswer() {
+        ansBox.style.display = 'block';
+        btnReveal.style.display = 'none';
+        actionBtns.style.display = 'flex'; 
+    }
+
+    function speakText() {
+        if ('speechSynthesis' in window) {
+            let cleanWord = currentQ.word.replace(/\(.*\)/, ""); 
+            let textToRead = `${cleanWord}. ${currentQ.sentence}`;
+            let utterance = new SpeechSynthesisUtterance(textToRead);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.9;
+            window.speechSynthesis.speak(utterance);
+        } else {
+            alert("抱歉，您的瀏覽器不支援語音功能。");
+        }
+    }
+
+    function markUnknown() {
+        questions.push(currentQ);
+        showToast();
+        loadQuestion();
+    }
+
+    function nextQuestion() {
+        loadQuestion();
+    }
+
+    function showToast() {
+        const toast = document.getElementById("toast");
+        toast.className = "show";
+        setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
+    }
+
+    loadQuestion();
+</script>
+
+</body>
+</html>
