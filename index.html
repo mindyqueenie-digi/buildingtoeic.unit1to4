@@ -7,17 +7,30 @@
     <link href="https://fonts.googleapis.com/css2?family=Gentium+Plus&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --primary-blue: #1e2a47; --accent-gold: #d4af37; --bg-main: #f4f7f9; }
+        
+        /* 隱藏預設游標 */
         * { cursor: none !important; } 
+
+        /* 修正圓形游標：提高 z-index 確保不被遮擋 */
         #mibi-cursor {
-            position: fixed; width: 65px; height: 65px;
+            position: fixed;
+            width: 65px;
+            height: 65px;
             background-image: url('mibi_happy.png');
-            background-size: cover; background-position: center; border-radius: 50%;
-            border: 3px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            pointer-events: none; z-index: 9999; transform: translate(-50%, -50%);
+            background-size: cover;
+            background-position: center;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            pointer-events: none;
+            z-index: 10000; /* 確保在最頂層 */
+            transform: translate(-50%, -50%);
             transition: transform 0.05s ease-out;
+            will-change: transform;
         }
+
         body { font-family: 'Gentium Plus', 'Noto Sans TC', sans-serif; background-color: var(--bg-main); display: flex; flex-direction: column; align-items: center; min-height: 100vh; margin: 0; }
-        .container { background-color: #fff; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 600px; text-align: center; margin-top: 5vh; }
+        .container { background-color: #fff; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 600px; text-align: center; margin-top: 5vh; position: relative; z-index: 1; }
         header h1 { color: var(--primary-blue); font-size: 1.8rem; margin-bottom: 5px; }
         .calc-tag { color: var(--accent-gold); font-weight: bold; font-size: 0.9rem; margin-bottom: 20px; }
         .badge { background-color: var(--primary-blue); color: white; padding: 5px 12px; border-radius: 15px; font-size: 0.85em; }
@@ -30,9 +43,9 @@
         button { padding: 12px 20px; font-size: 1em; border: none; border-radius: 8px; font-weight: bold; }
         .btn-show { background-color: #28a745; color: white; width: 100%; }
         .btn-speak { background-color: var(--accent-gold); color: white; width: 100%; margin-bottom: 15px; }
+        
         footer { margin-top: auto; padding: 40px 20px; text-align: center; color: #7f8c8d; font-size: 0.9rem; width: 100%; }
         .fb-link { color: var(--primary-blue); text-decoration: none; font-weight: bold; border-bottom: 2px solid var(--accent-gold); transition: 0.3s; }
-        .fb-link:hover { color: var(--accent-gold); }
     </style>
 </head>
 <body>
@@ -69,11 +82,14 @@
 </footer>
 
 <script>
+    // 游標控制：修正卡住問題
     const cursor = document.getElementById('mibi-cursor');
     document.addEventListener('mousemove', (e) => {
-        cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px';
+        cursor.style.left = e.clientX + 'px';
+        cursor.style.top = e.clientY + 'px';
     });
 
+    // 270 題完整資料庫
     const initialQuestions = [
         /* --- UNIT 1-4 原有資料 --- */
         { cat: "Unit 1: Office", zh: "夾板", word: "clipboard (n.)", sentence: "Please sign the form on the clipboard.", tip: "sign + form 文件簽名" },
