@@ -3,170 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TOEIC 單字語音特訓機 (完整版)</title>
+    <title>語思 CALC | MiBi 教你把多益唸清楚</title>
+    <link href="https://fonts.googleapis.com/css2?family=Gentium+Plus&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-            background-color: #f0f2f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            color: #333;
+        :root { --primary-blue: #1e2a47; --accent-gold: #d4af37; --bg-main: #f4f7f9; }
+        * { cursor: none !important; } 
+        #mibi-cursor {
+            position: fixed; width: 65px; height: 65px;
+            background-image: url('mibi_happy.png');
+            background-size: cover; background-position: center; border-radius: 50%;
+            border: 3px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            pointer-events: none; z-index: 9999; transform: translate(-50%, -50%);
+            transition: transform 0.05s ease-out;
         }
-        .container {
-            background-color: #fff;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            width: 90%;
-            max-width: 600px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-        .header-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            color: #666;
-            font-size: 0.9em;
-        }
-        .badge {
-            background-color: #007bff;
-            color: white;
-            padding: 5px 12px;
-            border-radius: 15px;
-            font-size: 0.85em;
-        }
-        .progress-counter {
-            font-weight: bold;
-            color: #555;
-        }
-        .question-text {
-            font-size: 2.5em;
-            font-weight: 700;
-            margin: 20px 0 30px 0;
-            color: #2c3e50;
-        }
-        .answer-area {
-            margin-top: 20px;
-            padding: 20px;
-            background-color: #f8f9fa;
-            border-radius: 12px;
-            display: none; /* 預設隱藏 */
-            text-align: left;
-            position: relative;
-        }
-        .english-word {
-            font-size: 1.8em;
-            color: #d63031;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .sentence {
-            font-size: 1.2em;
-            color: #555;
-            margin-bottom: 15px;
-            line-height: 1.6;
-        }
-        .tip {
-            font-size: 0.95em;
-            background-color: #fff3cd;
-            color: #856404;
-            padding: 8px 12px;
-            border-radius: 6px;
-            display: inline-block;
-        }
-        .btn-group {
-            margin-top: 30px;
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        button {
-            padding: 12px 20px;
-            font-size: 1em;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: transform 0.1s, background 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-        }
-        button:active { transform: scale(0.98); }
+        body { font-family: 'Gentium Plus', 'Noto Sans TC', sans-serif; background-color: var(--bg-main); display: flex; flex-direction: column; align-items: center; min-height: 100vh; margin: 0; }
+        .container { background-color: #fff; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 600px; text-align: center; margin-top: 5vh; }
+        header h1 { color: var(--primary-blue); font-size: 1.8rem; margin-bottom: 5px; }
+        .calc-tag { color: var(--accent-gold); font-weight: bold; font-size: 0.9rem; margin-bottom: 20px; }
+        .badge { background-color: var(--primary-blue); color: white; padding: 5px 12px; border-radius: 15px; font-size: 0.85em; }
+        .question-text { font-size: 2.2em; font-weight: 700; margin: 20px 0 30px 0; color: var(--primary-blue); }
+        .answer-area { margin-top: 20px; padding: 20px; background-color: #f8f9fa; border-radius: 12px; display: none; text-align: left; }
+        .english-word { font-size: 1.8em; color: #d63031; font-weight: bold; }
+        .sentence { font-size: 1.1em; color: #555; margin-bottom: 15px; line-height: 1.5; }
+        .tip { font-size: 0.9em; background-color: #fff3cd; color: #856404; padding: 8px 12px; border-radius: 6px; display: inline-block; }
+        .btn-group { margin-top: 30px; display: flex; gap: 10px; justify-content: center; }
+        button { padding: 12px 20px; font-size: 1em; border: none; border-radius: 8px; font-weight: bold; }
         .btn-show { background-color: #28a745; color: white; width: 100%; }
-        .btn-show:hover { background-color: #218838; }
-        .btn-next { background-color: #007bff; color: white; flex: 1; }
-        .btn-next:hover { background-color: #0069d9; }
-        .btn-unknown { background-color: #6c757d; color: white; flex: 1; }
-        .btn-unknown:hover { background-color: #5a6268; }
-        .btn-speak { 
-            background-color: #ffc107; 
-            color: #333; 
-            margin-bottom: 15px;
-            font-weight: bold;
-            width: 100%;
-        }
-        .btn-speak:hover { background-color: #e0a800; }
-        .interaction-area { display: none; }
-        #toast {
-            visibility: hidden;
-            min-width: 250px;
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            border-radius: 5px;
-            padding: 16px;
-            position: fixed;
-            z-index: 1;
-            left: 50%;
-            bottom: 30px;
-            transform: translateX(-50%);
-            font-size: 17px;
-            opacity: 0;
-            transition: opacity 0.5s, bottom 0.5s;
-        }
-        #toast.show { visibility: visible; opacity: 1; bottom: 50px; }
+        .btn-speak { background-color: var(--accent-gold); color: white; width: 100%; margin-bottom: 15px; }
+        footer { margin-top: auto; padding: 40px 20px; text-align: center; color: #7f8c8d; font-size: 0.9rem; width: 100%; }
+        .fb-link { color: var(--primary-blue); text-decoration: none; font-weight: bold; border-bottom: 2px solid var(--accent-gold); transition: 0.3s; }
+        .fb-link:hover { color: var(--accent-gold); }
     </style>
 </head>
 <body>
 
+<div id="mibi-cursor"></div>
 <div class="container">
-    <div class="header-info">
+    <header>
+        <h1>MiBi 教你把多益唸清楚</h1>
+        <div class="calc-tag">CALC 認知對齊：TOEIC 語音特訓機</div>
+    </header>
+    <div class="header-info" style="display:flex; justify-content:space-between; margin-bottom:20px;">
         <span id="category" class="badge">Unit 1</span>
-        <span id="counter" class="progress-counter">Loading...</span>
+        <span id="counter" style="font-weight:bold;">Loading...</span>
     </div>
-
     <div id="zh" class="question-text">載入中...</div>
-    
     <div id="answer-box" class="answer-area">
         <div id="en-word" class="english-word"></div>
         <div id="en-sentence" class="sentence"></div>
         <button class="btn-speak" onclick="speakText()">🔊 播放發音 (Listen)</button>
         <div id="en-tip" class="tip"></div>
     </div>
-
     <div class="btn-group">
         <button id="btn-reveal" class="btn-show" onclick="showAnswer()">👀 看答案</button>
-        <div id="action-btns" class="interaction-area" style="display:none; width:100%; display:flex; gap:10px;">
-            <button class="btn-unknown" onclick="markUnknown()">🤯 我不會 (稍後再練)</button>
-            <button class="btn-next" onclick="nextQuestion()">✅ 我會了 (下一題)</button>
+        <div id="action-btns" style="display:none; width:100%; display:flex; gap:10px;">
+            <button onclick="markUnknown()" style="background:#6c757d; color:white; flex:1;">🤯 我不會</button>
+            <button onclick="nextQuestion()" style="background:var(--primary-blue); color:white; flex:1;">✅ 我會了</button>
         </div>
     </div>
 </div>
 
-<div id="toast">已加入「待複習」清單，稍後再戰！💪</div>
+<footer>
+    <p>Copyright © 2026 <strong>語思之丘</strong> | Cognitive Alignment Construction Learning Framework</p>
+    <p>👉 加入 <a href="https://www.facebook.com/share/g/1F9c4r5xg6/?mibextid=wwXIfr" target="_blank" class="fb-link">MiBi 語思學英文臉書社團</a> 獲取最新 CALC 資源</p>
+</footer>
 
 <script>
-    // 完整資料庫 Unit 1 - Unit 4
+    const cursor = document.getElementById('mibi-cursor');
+    document.addEventListener('mousemove', (e) => {
+        cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px';
+    });
+
     const initialQuestions = [
-        // Unit 1
+        /* --- UNIT 1-4 原有資料 --- */
         { cat: "Unit 1: Office", zh: "夾板", word: "clipboard (n.)", sentence: "Please sign the form on the clipboard.", tip: "sign + form 文件簽名" },
         { cat: "Unit 1: Office", zh: "迴紋針", word: "paper clip (n.)", sentence: "Attach the receipt with a paper clip.", tip: "attach A with B 用B把A夾起來" },
         { cat: "Unit 1: Office", zh: "檔案櫃", word: "file cabinet (n.)", sentence: "The contracts are stored in the file cabinet.", tip: "be stored in 存放在" },
@@ -293,103 +202,209 @@
         { cat: "Unit 4: Banking", zh: "費用", word: "fee (n.)", sentence: "A service fee may apply.", tip: "may apply 可能適用" },
         { cat: "Unit 4: Banking", zh: "付款到期", word: "due (adj.)", sentence: "The payment is due on the 15th.", tip: "be due on + 日期" },
         { cat: "Unit 4: Banking", zh: "幫助/協助", word: "assistance (n.)", sentence: "Contact the branch for further assistance.", tip: "for further 更進一步" }
+
+        /* --- UNIT 5: School  --- */
+        { cat: "Unit 5: School", zh: "講座", word: "lecture", sentence: "I went to a lecture about history yesterday.", tip: "去聽一場講座 " },
+        { cat: "Unit 5: School", zh: "校園", word: "campus", sentence: "The campus is full of students in the morning.", tip: "校園充滿學生 " },
+        { cat: "Unit 5: School", zh: "課本", word: "textbook", sentence: "I bought a new English textbook for class.", tip: "買新的課本 " },
+        { cat: "Unit 5: School", zh: "置物櫃", word: "locker", sentence: "He keeps his books in the school locker.", tip: "學校的置物櫃 " },
+        { cat: "Unit 5: School", zh: "畢業", word: "graduate", sentence: "She will graduate from college next year.", tip: "從大學畢業 " },
+        { cat: "Unit 5: School", zh: "實驗室", word: "laboratory (lab)", sentence: "We did a chemistry experiment in the lab.", tip: "在實驗室做實驗 " },
+        { cat: "Unit 5: School", zh: "輔導員", word: "counselor", sentence: "The school counselor gave me good advice.", tip: "學校輔導員的建議 " },
+        { cat: "Unit 5: School", zh: "地理", word: "geography", sentence: "We studied mountains in geography class.", tip: "地理課學習知識 " },
+        { cat: "Unit 5: School", zh: "實驗", word: "experiment", sentence: "The students did an experiment with water.", tip: "做一個水的實驗 " },
+        { cat: "Unit 5: School", zh: "教授", word: "professor", sentence: "My professor is very strict but kind.", tip: "教授很嚴格但和藹 " },
+        { cat: "Unit 5: School", zh: "化學", word: "chemistry", sentence: "I think chemistry is a difficult subject.", tip: "化學是困難的科目 " },
+        { cat: "Unit 5: School", zh: "考試", word: "examination (exam)", sentence: "I have an English exam tomorrow.", tip: "明天有英文考試 " },
+        { cat: "Unit 5: School", zh: "自助餐廳", word: "cafeteria", sentence: "We ate lunch together in the cafeteria.", tip: "在餐廳吃午餐 " },
+        { cat: "Unit 5: School", zh: "不及格", word: "fail", sentence: "He studied hard but still failed the test.", tip: "考試仍然不及格 " },
+        { cat: "Unit 5: School", zh: "宿舍房間", word: "dorm room", sentence: "I share a dorm room with two friends.", tip: "同住一間宿舍 " },
+        { cat: "Unit 5: School", zh: "文憑", word: "diploma", sentence: "She received her diploma at graduation.", tip: "領到畢業文憑 " },
+        { cat: "Unit 5: School", zh: "缺席的", word: "absent", sentence: "He was absent from class yesterday.", tip: "昨天缺課了 " },
+        { cat: "Unit 5: School", zh: "生物", word: "biology", sentence: "In biology, we learn about plants and animals.", tip: "學習植物和動物 " },
+        { cat: "Unit 5: School", zh: "課程", word: "curriculum", sentence: "The school curriculum includes math and science.", tip: "學校課程包含數理 " },
+        { cat: "Unit 5: School", zh: "註冊/報名", word: "enroll", sentence: "Many students enroll in summer school.", tip: "報名參加暑期課程 " },
+        { cat: "Unit 5: School", zh: "短文/文章", word: "essay", sentence: "She wrote an essay about her family.", tip: "寫關於家人的文章 " },
+        { cat: "Unit 5: School", zh: "大學新生", word: "freshman", sentence: "He is a freshman in college this year.", tip: "今年是大學新生 " },
+        { cat: "Unit 5: School", zh: "研究所", word: "graduate school", sentence: "She wants to go to graduate school in the US.", tip: "想去美國念研究所 " },
+        { cat: "Unit 5: School", zh: "人文學科", word: "humanities", sentence: "Humanities classes include history and art.", tip: "包含歷史和藝術 " },
+        { cat: "Unit 5: School", zh: "文學", word: "literature", sentence: "We studied Shakespeare in literature class.", tip: "文學課學習莎士比亞 " },
+        { cat: "Unit 5: School", zh: "主修", word: "major in", sentence: "He majors in computer science.", tip: "主修電腦科學 " },
+        { cat: "Unit 5: School", zh: "數學", word: "mathematics", sentence: "Mathematics is important for engineers.", tip: "工程師的重要學科 " },
+        { cat: "Unit 5: School", zh: "實用的", word: "practical", sentence: "She wants to learn practical skills like cooking.", tip: "學習實用技能 " },
+        { cat: "Unit 5: School", zh: "獎學金", word: "scholarship", sentence: "He got a scholarship to study abroad.", tip: "獲得出國獎學金 " },
+        { cat: "Unit 5: School", zh: "學期", word: "semester", sentence: "Our school year has two semesters.", tip: "學年分為兩學期 " },
+        { cat: "Unit 5: School", zh: "研討會", word: "seminar", sentence: "We attended a seminar on leadership.", tip: "參加領導力研討會 " },
+        { cat: "Unit 5: School", zh: "學費", word: "tuition", sentence: "Tuition must be paid before classes start.", tip: "開學前繳清學費 " },
+
+        /* --- UNIT 6: Housing  --- */
+        { cat: "Unit 6: Housing", zh: "未附家具的", word: "unfurnished", sentence: "The apartment is unfurnished, so we need to buy all the furniture.", tip: "沒附家具需自己買 " },
+        { cat: "Unit 6: Housing", zh: "漏水", word: "leak", sentence: "There's a leak in the ceiling. Call the repair worker now!", tip: "天花板漏水了 " },
+        { cat: "Unit 6: Housing", zh: "地下室", word: "basement", sentence: "They turned their basement into a home theater.", tip: "地下室改成電影院 " },
+        { cat: "Unit 6: Housing", zh: "搬入", word: "move in", sentence: "We'll move in next week after the cleaning is done.", tip: "清潔完下週搬進去 " },
+        { cat: "Unit 6: Housing", zh: "割草機", word: "lawn mower", sentence: "He bought a new lawn mower to cut the grass in the yard.", tip: "買割草機修剪草坪 " },
+        { cat: "Unit 6: Housing", zh: "修理工", word: "repair worker", sentence: "The repair worker fixed the broken pipe in the kitchen.", tip: "修好廚房破裂水管 " },
+        { cat: "Unit 6: Housing", zh: "園丁", word: "gardener", sentence: "Our gardener comes every weekend to trim the plants.", tip: "每週末修剪植物 " },
+        { cat: "Unit 6: Housing", zh: "圍籬", word: "fence", sentence: "There's a white fence around the garden.", tip: "花園周圍的白色圍籬 " },
+        { cat: "Unit 6: Housing", zh: "房地產仲介", word: "realtor", sentence: "We found our new house through a local realtor.", tip: "透過當地仲介找房 " },
+        { cat: "Unit 6: Housing", zh: "公寓社區", word: "apartment complex", sentence: "This apartment complex has a gym and a swimming pool.", tip: "社區有健身房和泳池 " },
+        { cat: "Unit 6: Housing", zh: "屋主", word: "homeowners", sentence: "Many homeowners are planting trees.", tip: "房主種樹美化社區 " },
+        { cat: "Unit 6: Housing", zh: "院子", word: "yard", sentence: "The kids are playing in the yard with their dog.", tip: "孩子在院子玩耍 " },
+        { cat: "Unit 6: Housing", zh: "抱怨", word: "complain", sentence: "The neighbors always complain about the noise.", tip: "鄰居抱怨噪音太大 " },
+        { cat: "Unit 6: Housing", zh: "建築師", word: "architect", sentence: "The architect designed a modern and eco-friendly house.", tip: "設計現代環保房子 " },
+        { cat: "Unit 6: Housing", zh: "綠籬", word: "hedge", sentence: "They planted a hedge for privacy around their yard.", tip: "種綠籬保護隱私 " },
+        { cat: "Unit 6: Housing", zh: "門廊", word: "porch", sentence: "We sat on the porch and watched the sunset.", tip: "坐在門廊看日落 " },
+        { cat: "Unit 6: Housing", zh: "公寓管理員", word: "apartment manager", sentence: "Call the apartment manager if anything breaks.", tip: "東西壞了通知管理員 " },
+        { cat: "Unit 6: Housing", zh: "信用審查", word: "credit check", sentence: "You'll need a credit check before renting.", tip: "租屋前的信用審查 " },
+        { cat: "Unit 6: Housing", zh: "頭期款", word: "down payment", sentence: "We made a 10% down payment on our new house.", tip: "支付新屋頭期款 " },
+        { cat: "Unit 6: Housing", zh: "房東", word: "landlord", sentence: "Our landlord is very kind and helpful.", tip: "房東親切樂於助人 " },
+        { cat: "Unit 6: Housing", zh: "租約", word: "lease", sentence: "We signed a two-year lease for this apartment.", tip: "簽署了兩年租約 " },
+        { cat: "Unit 6: Housing", zh: "房貸", word: "mortgage", sentence: "They finally paid off their mortgage after 20 years.", tip: "花了二十年還清房貸 " },
+        { cat: "Unit 6: Housing", zh: "許可/准許", word: "permission", sentence: "You need permission to make changes to the building.", tip: "改結構前須獲許可 " },
+        { cat: "Unit 6: Housing", zh: "潛力", word: "potential", sentence: "This old house has a lot of potential for renovation.", tip: "老屋有翻修潛力 " },
+        { cat: "Unit 6: Housing", zh: "推薦人/參考", word: "reference", sentence: "Please provide two references for your rental.", tip: "提供兩位租屋推薦人 " },
+        { cat: "Unit 6: Housing", zh: "租金", word: "rent", sentence: "Our rent is due on the fifth of every month.", tip: "每個月五號繳房租 " },
+        { cat: "Unit 6: Housing", zh: "整修", word: "renovate", sentence: "They plan to renovate the kitchen next month.", tip: "計畫下月整修廚房 " },
+        { cat: "Unit 6: Housing", zh: "住所", word: "residence", sentence: "What kind of residence are you looking for?", tip: "在找哪種住所 " },
+        { cat: "Unit 6: Housing", zh: "破舊的", word: "run-down", sentence: "The building looks old and run-down, but it's cheap.", tip: "建築老舊但便宜 " },
+        { cat: "Unit 6: Housing", zh: "房客/租戶", word: "tenant", sentence: "The tenant takes good care of the apartment.", tip: "房客很愛護公寓 " },
+        { cat: "Unit 6: Housing", zh: "公用事業費(水電)", word: "utilities", sentence: "Did you remember to pay the utilities this month?", tip: "記得繳水電費嗎 " },
+
+        /* --- UNIT 7: Transport  --- */
+        { cat: "Unit 7: Transport", zh: "公車站", word: "bus stop", sentence: "I waited for my friend at the bus stop.", tip: "在公車站等朋友 " },
+        { cat: "Unit 7: Transport", zh: "時刻表", word: "timetable", sentence: "The train timetable shows the next train is at 7:30.", tip: "時刻表顯示班次 " },
+        { cat: "Unit 7: Transport", zh: "停車收費表", word: "parking meter", sentence: "Don't forget to put coins in the parking meter.", tip: "投硬幣到收費表 " },
+        { cat: "Unit 7: Transport", zh: "拖吊車", word: "tow truck", sentence: "A tow truck came to take away the broken car.", tip: "拖吊車把壞車拖走 " },
+        { cat: "Unit 7: Transport", zh: "高速公路", word: "freeway", sentence: "We drove on the freeway to get to the city faster.", tip: "開上高速公路 " },
+        { cat: "Unit 7: Transport", zh: "橋", word: "bridge", sentence: "There is a long bridge across the river.", tip: "河上的一座長橋 " },
+        { cat: "Unit 7: Transport", zh: "安全帶", word: "seatbelt", sentence: "Please fasten your seatbelt before the car starts.", tip: "車開動前繫好帶子 " },
+        { cat: "Unit 7: Transport", zh: "交通堵塞", word: "traffic jam", sentence: "We were late because of a traffic jam.", tip: "因為堵塞而遲到 " },
+        { cat: "Unit 7: Transport", zh: "加油機", word: "gas pump", sentence: "He filled his car at the gas pump.", tip: "在加油機前加油 " },
+        { cat: "Unit 7: Transport", zh: "加油站", word: "gas station", sentence: "There is a gas station near the supermarket.", tip: "超市旁的加油站 " },
+        { cat: "Unit 7: Transport", zh: "機車", word: "motorcycle", sentence: "My brother rides a motorcycle to school.", tip: "每天騎機車上學 " },
+        { cat: "Unit 7: Transport", zh: "客運總站", word: "bus terminal", sentence: "We met at the bus terminal before the trip.", tip: "旅行前總站碰面 " },
+        { cat: "Unit 7: Transport", zh: "停車罰單", word: "parking ticket", sentence: "He got a parking ticket for parking wrong.", tip: "收到停車罰單 " },
+        { cat: "Unit 7: Transport", zh: "停車場", word: "parking lot", sentence: "The parking lot was full of cars.", tip: "停車場停滿了車 " },
+        { cat: "Unit 7: Transport", zh: "技工", word: "mechanic", sentence: "The mechanic repaired my car yesterday.", tip: "技工修好了我的車 " },
+        { cat: "Unit 7: Transport", zh: "車庫", word: "garage", sentence: "We park our car in the garage at night.", tip: "晚上把車停車庫 " },
+        { cat: "Unit 7: Transport", zh: "故障", word: "break down", sentence: "My car broke down on the way to work.", tip: "上班路上壞掉了 " },
+        { cat: "Unit 7: Transport", zh: "公告", word: "announcement", sentence: "The announcement said the bus would be late.", tip: "公告說公車晚到 " },
+        { cat: "Unit 7: Transport", zh: "共乘", word: "car pool", sentence: "We save money by joining a car pool.", tip: "透過共乘省錢 " },
+        { cat: "Unit 7: Transport", zh: "通勤", word: "commute", sentence: "I commute to work by subway every day.", tip: "搭地鐵通勤上班 " },
+        { cat: "Unit 7: Transport", zh: "延誤", word: "delay", sentence: "The flight was delayed by two hours.", tip: "航班延誤兩小時 " },
+        { cat: "Unit 7: Transport", zh: "直達的", word: "direct", sentence: "We took a direct bus to the airport.", tip: "搭直達巴士去機場 " },
+        { cat: "Unit 7: Transport", zh: "十字路口", word: "intersection", sentence: "Turn left at the intersection.", tip: "在十字路口左轉 " },
+        { cat: "Unit 7: Transport", zh: "步行", word: "on foot", sentence: "She goes to school on foot every morning.", tip: "每天早上步行上學 " },
+        { cat: "Unit 7: Transport", zh: "停車位", word: "parking spot", sentence: "We finally found a parking spot near the mall.", tip: "終於找到一個車位 " },
+        { cat: "Unit 7: Transport", zh: "退款", word: "refund", sentence: "I got a refund because the ticket was canceled.", tip: "拿到票券退款 " },
+        { cat: "Unit 7: Transport", zh: "接駁車", word: "shuttle bus", sentence: "The hotel provides a shuttle bus to the airport.", tip: "飯店提供的接駁車 " },
+        { cat: "Unit 7: Transport", zh: "地鐵", word: "subway", sentence: "The subway is faster than the bus.", tip: "地鐵比公車快 " },
+        { cat: "Unit 7: Transport", zh: "紅綠燈", word: "traffic light", sentence: "You must stop when the traffic light is red.", tip: "紅燈時必須停下 " },
+        { cat: "Unit 7: Transport", zh: "轉乘", word: "transfer", sentence: "I need to transfer to another bus at the next stop.", tip: "在下一站轉乘公車 " },
+        { cat: "Unit 7: Transport", zh: "車輛", word: "vehicle", sentence: "Bicycles, cars, and buses are all vehicles.", tip: "各種常見的車輛 " },
+
+        /* --- UNIT 8: Factory  --- */
+        { cat: "Unit 8: Factory", zh: "螺絲", word: "screw", sentence: "The screw is loose on the chair.", tip: "椅子上的螺絲鬆了 " },
+        { cat: "Unit 8: Factory", zh: "機械設備", word: "machinery", sentence: "The factory bought new machinery last week.", tip: "工廠買新機械設備 " },
+        { cat: "Unit 8: Factory", zh: "管子/管線", word: "pipe", sentence: "Water is leaking from the pipe.", tip: "水從管子漏出來 " },
+        { cat: "Unit 8: Factory", zh: "員工", word: "staff", sentence: "The staff is working very hard today.", tip: "員工今天很努力 " },
+        { cat: "Unit 8: Factory", zh: "機器人", word: "robot", sentence: "The robot can move heavy boxes.", tip: "機器人搬重箱子 " },
+        { cat: "Unit 8: Factory", zh: "包裹", word: "package", sentence: "I received a package this morning.", tip: "早上收到一個包裹 " },
+        { cat: "Unit 8: Factory", zh: "佈告欄", word: "notice board", sentence: "Check the notice board for today's schedule.", tip: "到佈告欄查看行程 " },
+        { cat: "Unit 8: Factory", zh: "廢棄物", word: "waste", sentence: "Please put the waste in the blue bin.", tip: "把廢物放進藍桶子 " },
+        { cat: "Unit 8: Factory", zh: "架子", word: "shelf", sentence: "The tools are on the top shelf.", tip: "工具在最上層架子 " },
+        { cat: "Unit 8: Factory", zh: "倉庫", word: "warehouse", sentence: "The warehouse is full of new products.", tip: "倉庫堆滿了新產品 " },
+        { cat: "Unit 8: Factory", zh: "堆高機", word: "forklift", sentence: "He used a forklift to lift the pallets.", tip: "用堆高機抬棧板 " },
+        { cat: "Unit 8: Factory", zh: "安全帽", word: "hard hat", sentence: "You must wear a hard hat in this area.", tip: "區域內戴安全帽 " },
+        { cat: "Unit 8: Factory", zh: "檢查", word: "inspect", sentence: "The manager will inspect the machines tomorrow.", tip: "經理明天檢查機器 " },
+        { cat: "Unit 8: Factory", zh: "制服", word: "uniform", sentence: "All staff wear the same uniform.", tip: "全體員工穿一樣 " },
+        { cat: "Unit 8: Factory", zh: "組裝", word: "assemble", sentence: "They assemble the parts on the line.", tip: "產線上組裝零件 " },
+        { cat: "Unit 8: Factory", zh: "防護裝備", word: "protective wear", sentence: "Gloves and goggles are protective wear.", tip: "手套和護目鏡 " },
+        { cat: "Unit 8: Factory", zh: "老闆/主管", word: "boss", sentence: "My boss always supports the team.", tip: "老闆總是支持團隊 " },
+        { cat: "Unit 8: Factory", zh: "工程師", word: "engineer", sentence: "The engineer fixed the robot in ten minutes.", tip: "十分鐘修好機器人 " },
+        { cat: "Unit 8: Factory", zh: "庫存", word: "inventory", sentence: "We do inventory every Friday.", tip: "每週五盤點庫存 " },
+        { cat: "Unit 8: Factory", zh: "鬆的", word: "loose", sentence: "This bolt is loose please tighten it.", tip: "螺栓鬆了請鎖緊 " },
+        { cat: "Unit 8: Factory", zh: "方法", word: "method", sentence: "We changed the method to save time.", tip: "改變方法節省時間 " },
+        { cat: "Unit 8: Factory", zh: "訂購", word: "order", sentence: "The office ordered more paper online.", tip: "上網訂更多紙張 " },
+        { cat: "Unit 8: Factory", zh: "零件", word: "part", sentence: "This part doesn't fit the machine.", tip: "零件不適合這機器 " },
+        { cat: "Unit 8: Factory", zh: "工廠", word: "plant", sentence: "The new plant will open next month.", tip: "新工廠下個月啟用 " },
+        { cat: "Unit 8: Factory", zh: "流程/程序", word: "process", sentence: "The packing process is very fast.", tip: "包裝流程非常快 " },
+        { cat: "Unit 8: Factory", zh: "品質管制", word: "quality control", sentence: "Quality control catches small mistakes.", tip: "品管能抓到小錯誤 " },
+        { cat: "Unit 8: Factory", zh: "更換", word: "replace", sentence: "We need to replace the broken cable.", tip: "更換損壞的電纜 " },
+        { cat: "Unit 8: Factory", zh: "要求/申請", word: "request", sentence: "I requested new gloves for the team.", tip: "幫團隊申請新手套 " },
+        { cat: "Unit 8: Factory", zh: "停機/關閉", word: "shut down", sentence: "The line shut down for maintenance.", tip: "保養而停機 " },
+        { cat: "Unit 8: Factory", zh: "供應商", word: "supplier", sentence: "Our supplier delivers every Monday.", tip: "供應商每週一送貨 " },
+
+        /* --- UNIT 9: Medical  --- */
+        { cat: "Unit 9: Medical", zh: "救護車", word: "ambulance", sentence: "The ambulance arrived in five minutes.", tip: "救護車五分鐘內到 " },
+        { cat: "Unit 9: Medical", zh: "病人", word: "patient", sentence: "The patient is waiting for the doctor.", tip: "病人在等醫生 " },
+        { cat: "Unit 9: Medical", zh: "手術", word: "surgery", sentence: "She had heart surgery last year.", tip: "去年做心臟手術 " },
+        { cat: "Unit 9: Medical", zh: "量血壓", word: "check blood pressure", sentence: "The nurse checked my blood pressure.", tip: "護士幫我量了血壓 " },
+        { cat: "Unit 9: Medical", zh: "藥丸", word: "pill", sentence: "Take this pill twice a day.", tip: "藥丸每天吃兩次 " },
+        { cat: "Unit 9: Medical", zh: "候診室", word: "waiting room", sentence: "We sat in the waiting room for half an hour.", tip: "在候診室坐半小時 " },
+        { cat: "Unit 9: Medical", zh: "藥局", word: "pharmacy", sentence: "I bought some medicine at the pharmacy.", tip: "在藥局買了一些藥 " },
+        { cat: "Unit 9: Medical", zh: "護士", word: "nurse", sentence: "The nurse gave me an injection.", tip: "護士幫我打針 " },
+        { cat: "Unit 9: Medical", zh: "剪刀", word: "scissors", sentence: "The doctor used scissors to cut the bandage.", tip: "醫生用剪刀剪繃帶 " },
+        { cat: "Unit 9: Medical", zh: "注射器", word: "syringe", sentence: "The syringe was filled with medicine.", tip: "注射器裝滿了藥 " },
+        { cat: "Unit 9: Medical", zh: "輪椅", word: "wheelchair", sentence: "He moved around in a wheelchair.", tip: "靠輪椅行動 " },
+        { cat: "Unit 9: Medical", zh: "X光", word: "x-ray", sentence: "The doctor looked at my x-ray.", tip: "醫生看X光片 " },
+        { cat: "Unit 9: Medical", zh: "打針", word: "get a shot", sentence: "I need to get a shot for the flu.", tip: "打流感疫苗針 " },
+        { cat: "Unit 9: Medical", zh: "口罩", word: "mask", sentence: "Please wear a mask in the hospital.", tip: "醫院裡戴口罩 " },
+        { cat: "Unit 9: Medical", zh: "拐杖", word: "crutches", sentence: "He walks with crutches after the accident.", tip: "靠拐杖走路 " },
+        { cat: "Unit 9: Medical", zh: "石膏", word: "cast", sentence: "She has a cast on her arm.", tip: "手打了石膏 " },
+        { cat: "Unit 9: Medical", zh: "繃帶", word: "bandage", sentence: "The nurse put a bandage on my hand.", tip: "手上纏了繃帶 " },
+        { cat: "Unit 9: Medical", zh: "健康檢查", word: "checkup", sentence: "I go for a checkup once a year.", tip: "每年做健康檢查 " },
+        { cat: "Unit 9: Medical", zh: "疾病", word: "disease", sentence: "Cancer is a serious disease.", tip: "嚴重的疾病 " },
+        { cat: "Unit 9: Medical", zh: "緊急情況", word: "emergency", sentence: "Call 119 in case of an emergency.", tip: "打119專線 " },
+        { cat: "Unit 9: Medical", zh: "檢查", word: "examine", sentence: "The doctor examined my eyes.", tip: "醫生檢查眼睛 " },
+        { cat: "Unit 9: Medical", zh: "發燒", word: "fever", sentence: "He has a high fever.", tip: "他發高燒 " },
+        { cat: "Unit 9: Medical", zh: "傷口/傷害", word: "injury", sentence: "He has a leg injury.", tip: "他的腿受傷了 " },
+        { cat: "Unit 9: Medical", zh: "藥物", word: "medication", sentence: "The doctor gave me some medication.", tip: "醫生給了藥物 " },
+        { cat: "Unit 9: Medical", zh: "轉診", word: "refer", sentence: "I was referred to a specialist.", tip: "轉診到專科醫生 " },
+        { cat: "Unit 9: Medical", zh: "外科醫生", word: "surgeon", sentence: "The surgeon performed the operation.", tip: "醫生進行手術 " },
+        { cat: "Unit 9: Medical", zh: "症狀", word: "symptom", sentence: "A cough is a symptom of a cold.", tip: "感冒的症狀 " },
+        { cat: "Unit 9: Medical", zh: "治療", word: "treatment", sentence: "She is getting treatment for her illness.", tip: "正在接受治療 " },
+        { cat: "Unit 9: Medical", zh: "探病時間", word: "visiting hours", sentence: "Visiting hours are from 2 to 4 p.m.", tip: "下午探病時間 " },
+        { cat: "Unit 9: Medical", zh: "嘔吐", word: "vomit", sentence: "He felt sick and vomited.", tip: "不舒服而嘔吐 " },
+        { cat: "Unit 9: Medical", zh: "病房", word: "ward", sentence: "She stayed in the hospital ward for two weeks.", tip: "在病房住兩週 " }
     ];
 
-    // 洗牌演算法 (Fisher-Yates Shuffle) - 確保每次題目順序都不一樣
-    function shuffle(array) {
-        let currentIndex = array.length, randomIndex;
-        while (currentIndex != 0) {
-            randomIndex = Math.floor(Math.random() * currentIndex);
-            currentIndex--;
-            [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
-        }
-        return array;
-    }
-
-    // 將題目洗牌後放入執行佇列
-    let questions = shuffle([...initialQuestions]);
+    let questions = [...initialQuestions].sort(() => Math.random() - 0.5);
     let currentQ = {};
-
-    // DOM 元素
-    const zhEl = document.getElementById('zh');
-    const catEl = document.getElementById('category');
-    const counterEl = document.getElementById('counter');
-    const ansBox = document.getElementById('answer-box');
-    const wordEl = document.getElementById('en-word');
-    const sentEl = document.getElementById('en-sentence');
-    const tipEl = document.getElementById('en-tip');
-    const btnReveal = document.getElementById('btn-reveal');
-    const actionBtns = document.getElementById('action-btns');
 
     function loadQuestion() {
         if (questions.length === 0) {
-            zhEl.textContent = "🎉 太棒了！全部練習完成！";
-            catEl.style.display = 'none';
-            ansBox.style.display = 'none';
-            btnReveal.style.display = 'none';
-            actionBtns.style.display = 'none';
-            counterEl.textContent = "剩餘題數: 0";
+            document.querySelector('.container').innerHTML = "<h1>🎉 全部完成！</h1><p>270 個多益單字你都練習過了！</p><button onclick='location.reload()' style='background:var(--primary-blue); color:white; padding:10px 20px; border:none; border-radius:8px;'>重新開始</button>";
             return;
         }
-
-        currentQ = questions.shift(); 
-        
-        zhEl.textContent = currentQ.zh;
-        catEl.textContent = currentQ.cat;
-        
-        // 設定不同類型的顏色 (選用)
-        if(currentQ.cat.includes("Unit 1")) catEl.style.backgroundColor = "#007bff"; // 藍
-        else if(currentQ.cat.includes("Unit 2")) catEl.style.backgroundColor = "#28a745"; // 綠
-        else if(currentQ.cat.includes("Unit 3")) catEl.style.backgroundColor = "#e83e8c"; // 粉
-        else catEl.style.backgroundColor = "#fd7e14"; // 橘
-        
-        counterEl.textContent = `剩餘題數: ${questions.length + 1}`;
-        wordEl.textContent = currentQ.word;
-        sentEl.textContent = currentQ.sentence;
-        tipEl.textContent = `💡 用法提示：${currentQ.tip}`;
-        
-        ansBox.style.display = 'none';
-        btnReveal.style.display = 'block';
-        actionBtns.style.display = 'none';
+        currentQ = questions.shift();
+        document.getElementById('zh').textContent = currentQ.zh;
+        document.getElementById('category').textContent = currentQ.cat;
+        document.getElementById('counter').textContent = `剩餘: ${questions.length + 1}`;
+        document.getElementById('en-word').textContent = currentQ.word;
+        document.getElementById('en-sentence').textContent = currentQ.sentence;
+        document.getElementById('en-tip').textContent = `💡 認知提示：${currentQ.tip}`;
+        document.getElementById('answer-box').style.display = 'none';
+        document.getElementById('btn-reveal').style.display = 'block';
+        document.getElementById('action-btns').style.display = 'none';
     }
 
     function showAnswer() {
-        ansBox.style.display = 'block';
-        btnReveal.style.display = 'none';
-        actionBtns.style.display = 'flex'; 
+        document.getElementById('answer-box').style.display = 'block';
+        document.getElementById('btn-reveal').style.display = 'none';
+        document.getElementById('action-btns').style.display = 'flex';
     }
 
     function speakText() {
-        if ('speechSynthesis' in window) {
-            let cleanWord = currentQ.word.replace(/\(.*\)/, ""); 
-            let textToRead = `${cleanWord}. ${currentQ.sentence}`;
-            let utterance = new SpeechSynthesisUtterance(textToRead);
-            utterance.lang = 'en-US';
-            utterance.rate = 0.9;
-            window.speechSynthesis.speak(utterance);
-        } else {
-            alert("抱歉，您的瀏覽器不支援語音功能。");
-        }
+        window.speechSynthesis.cancel();
+        let utterance = new SpeechSynthesisUtterance(`${currentQ.word}. ${currentQ.sentence}`);
+        utterance.lang = 'en-US'; utterance.rate = 0.85;
+        window.speechSynthesis.speak(utterance);
     }
 
-    function markUnknown() {
-        questions.push(currentQ);
-        showToast();
-        loadQuestion();
-    }
-
-    function nextQuestion() {
-        loadQuestion();
-    }
-
-    function showToast() {
-        const toast = document.getElementById("toast");
-        toast.className = "show";
-        setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
-    }
-
+    function markUnknown() { questions.push(currentQ); loadQuestion(); }
+    function nextQuestion() { loadQuestion(); }
     loadQuestion();
 </script>
-
 </body>
 </html>
