@@ -14,7 +14,7 @@
             background-image: url('mibi_happy.png');
             background-size: cover; background-position: center; border-radius: 50%;
             border: 3px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            pointer-events: none; z-index: 99999; /* 確保游標在最頂層 */
+            pointer-events: none; z-index: 99999;
             transform: translate(-50%, -50%);
             transition: transform 0.05s ease-out;
         }
@@ -45,7 +45,7 @@
         <div class="calc-tag">CALC 認知對齊：TOEIC 語音特訓機</div>
     </header>
     <div class="header-info" style="display:flex; justify-content:space-between; margin-bottom:20px;">
-        <span id="category" class="badge">Unit 1</span>
+        <span id="category" class="badge">載入中...</span>
         <span id="counter" style="font-weight:bold;">Loading...</span>
     </div>
     <div id="zh" class="question-text">載入中...</div>
@@ -76,7 +76,7 @@
     });
 
     const initialQuestions = [
-        /* --- UNIT 1: Office --- */
+        /* --- UNIT 1-4 --- */
         { cat: "Unit 1: Office", zh: "夾板", word: "clipboard (n.)", sentence: "Please sign the form on the clipboard.", tip: "sign + form 文件簽名" },
         { cat: "Unit 1: Office", zh: "迴紋針", word: "paper clip (n.)", sentence: "Attach the receipt with a paper clip.", tip: "attach A with B 用B把A夾起來" },
         { cat: "Unit 1: Office", zh: "檔案櫃", word: "file cabinet (n.)", sentence: "The contracts are stored in the file cabinet.", tip: "be stored in 存放在" },
@@ -84,12 +84,12 @@
         { cat: "Unit 1: Office", zh: "印章", word: "stamp (n./v.)", sentence: "Please stamp the document before you send it.", tip: "before + S + V 流程順序" },
         { cat: "Unit 1: Office", zh: "墨水匣", word: "ink cartridge (n.)", sentence: "We need to replace the ink cartridge in the printer.", tip: "replace A in B 更換B裡的A" },
         { cat: "Unit 1: Office", zh: "螢幕", word: "monitor (n.)", sentence: "The data is displayed on the monitor.", tip: "be displayed on 顯示於" },
-        { cat: "Unit 1: Office", zh: "鍵盤", word: "keyboard (n.)", sentence: "The keyboard isn’t working properly.", tip: "work properly 運作正常" },
+        { cat: "Unit 1: Office", zh: "鍵盤", word: "keyboard (n.)", sentence: "The keyboard isn't working properly.", tip: "work properly 運作正常" },
         { cat: "Unit 1: Office", zh: "印表機", word: "printer (n.)", sentence: "The printer is out of paper.", tip: "be out of + N 用完" },
         { cat: "Unit 1: Office", zh: "碎紙機", word: "paper shredder (n.)", sentence: "Use the paper shredder to dispose of sensitive files.", tip: "dispose of 處理/丟棄" },
         { cat: "Unit 1: Office", zh: "文件", word: "document (n.)", sentence: "Please review the document before approval.", tip: "before approval 核准前" },
         { cat: "Unit 1: Office", zh: "計算機", word: "calculator (n.)", sentence: "Use a calculator to check the total.", tip: "check the total 核對總額" },
-        { cat: "Unit 1: Office", zh: "投影機", word: "projector (n.)", sentence: "We’ll set up the projector for the meeting.", tip: "set up 架設/準備" },
+        { cat: "Unit 1: Office", zh: "投影機", word: "projector (n.)", sentence: "We'll set up the projector for the meeting.", tip: "set up 架設/準備" },
         { cat: "Unit 1: Office", zh: "月曆", word: "calendar (n.)", sentence: "Please mark the deadline on your calendar.", tip: "mark the deadline 標註截止日" },
         { cat: "Unit 1: Office", zh: "隔間辦公室", word: "cubicle (n.)", sentence: "He works in a cubicle near the window.", tip: "work in 工作地點" },
         { cat: "Unit 1: Office", zh: "會議室", word: "conference room (n.)", sentence: "The conference room is reserved until 3 p.m.", tip: "be reserved until 預約到…" },
@@ -108,7 +108,7 @@
         { cat: "Unit 1: Office", zh: "會議", word: "meeting (n.)", sentence: "The meeting has been moved to Friday.", tip: "be moved to 改期到" },
         { cat: "Unit 1: Office", zh: "期限", word: "deadline (n.)", sentence: "Please submit the report before the deadline.", tip: "submit the report 交報告" },
 
-        /* --- UNIT 2: Travel  --- */
+        /* --- UNIT 2: Travel --- */
         { cat: "Unit 2: Travel", zh: "行李箱", word: "suitcase (n.)", sentence: "The airline lost my suitcase during the transfer.", tip: "airline lost + luggage 常見抱怨句" },
         { cat: "Unit 2: Travel", zh: "走道", word: "aisle (n.)", sentence: "Could I have an aisle seat, please?", tip: "aisle seat / window seat" },
         { cat: "Unit 2: Travel", zh: "點心", word: "snack (n.)", sentence: "Snacks are available on board.", tip: "available on board 機上用語" },
@@ -126,13 +126,13 @@
         { cat: "Unit 2: Travel", zh: "隨身行李", word: "carry-on (n./adj.)", sentence: "This bag counts as carry-on baggage.", tip: "count as 算作" },
         { cat: "Unit 2: Travel", zh: "代理/櫃檯人員", word: "agent (n.)", sentence: "The agent rebooked my flight.", tip: "rebook 改訂機票" },
         { cat: "Unit 2: Travel", zh: "航空公司", word: "airline (n.)", sentence: "Ryanair is a low-cost airline.", tip: "low-cost airline 常見搭配" },
-        { cat: "Unit 2: Travel", zh: "登上（交通工具）", word: "board (v.)", sentence: "We board the plane at three o’clock.", tip: "board + 交通工具" },
+        { cat: "Unit 2: Travel", zh: "登上（交通工具）", word: "board (v.)", sentence: "We board the plane at three o'clock.", tip: "board + 交通工具" },
         { cat: "Unit 2: Travel", zh: "預訂", word: "book (v.)", sentence: "I booked my flight on a travel website.", tip: "book + flight/hotel" },
         { cat: "Unit 2: Travel", zh: "取消", word: "cancel (v.)", sentence: "I had to cancel my trip due to bad weather.", tip: "due to + N 原因" },
-        { cat: "Unit 2: Travel", zh: "報到", word: "check in (phr. v.)", sentence: "Let’s check in so we can go up to our room.", tip: "check in＝報到/入住" },
+        { cat: "Unit 2: Travel", zh: "報到", word: "check in (phr. v.)", sentence: "Let's check in so we can go up to our room.", tip: "check in＝報到/入住" },
         { cat: "Unit 2: Travel", zh: "海關", word: "customs (n.)", sentence: "The agent at customs looked in my suitcase.", tip: "at customs 固定搭配" },
         { cat: "Unit 2: Travel", zh: "出發", word: "depart (v.)", sentence: "We depart from the hotel at 6 a.m.", tip: "depart from" },
-        { cat: "Unit 2: Travel", zh: "航班", word: "flight (n.)", sentence: "I’m taking a flight to Spain.", tip: "take a flight to" },
+        { cat: "Unit 2: Travel", zh: "航班", word: "flight (n.)", sentence: "I'm taking a flight to Spain.", tip: "take a flight to" },
         { cat: "Unit 2: Travel", zh: "行程表", word: "itinerary (n.)", sentence: "Our itinerary includes three days in Paris.", tip: "include + 天數/行程" },
         { cat: "Unit 2: Travel", zh: "排隊", word: "line up (phr. v.)", sentence: "We need to line up at that desk to check in.", tip: "line up at" },
         { cat: "Unit 2: Travel", zh: "乘客", word: "passenger (n.)", sentence: "The bus can take 30 passengers.", tip: "take + 人數 容納" },
@@ -140,7 +140,7 @@
         { cat: "Unit 2: Travel", zh: "剩下/仍然", word: "remain (v.)", sentence: "Only three seats remain on this flight.", tip: "seats remain 常見公告" },
         { cat: "Unit 2: Travel", zh: "訂位", word: "reservation (n.)", sentence: "Did you make a hotel reservation?", tip: "make a reservation" },
 
-        /* --- UNIT 3: Shopping  --- */
+        /* --- UNIT 3: Shopping --- */
         { cat: "Unit 3: Shopping", zh: "條碼", word: "barcode (n.)", sentence: "The cashier scanned the barcode.", tip: "scan + barcode 收銀流程" },
         { cat: "Unit 3: Shopping", zh: "顧客", word: "customer (n.)", sentence: "Customers can return items within 7 days.", tip: "within 7 days 退貨政策" },
         { cat: "Unit 3: Shopping", zh: "價格", word: "price (n.)", sentence: "The price includes tax.", tip: "include tax 稅已含" },
@@ -148,7 +148,7 @@
         { cat: "Unit 3: Shopping", zh: "家具", word: "furniture (n.)", sentence: "The store sells office furniture.", tip: "office furniture TOEIC常見" },
         { cat: "Unit 3: Shopping", zh: "架子", word: "rack (n.)", sentence: "Please place the items on the rack.", tip: "place A on B" },
         { cat: "Unit 3: Shopping", zh: "標籤", word: "label (n./v.)", sentence: "The label shows the original price.", tip: "original price 原價" },
-        { cat: "Unit 3: Shopping", zh: "折扣", word: "discount (n.)", sentence: "You’ll get a 10% discount with this coupon.", tip: "get a discount" },
+        { cat: "Unit 3: Shopping", zh: "折扣", word: "discount (n.)", sentence: "You'll get a 10% discount with this coupon.", tip: "get a discount" },
         { cat: "Unit 3: Shopping", zh: "錢包", word: "wallet (n.)", sentence: "I left my wallet at home.", tip: "leave + 物品 + 地點" },
         { cat: "Unit 3: Shopping", zh: "廚房用品", word: "kitchenware (n.)", sentence: "Kitchenware is on the second floor.", tip: "on the second floor 位置" },
         { cat: "Unit 3: Shopping", zh: "購物", word: "shopping (n.)", sentence: "We went shopping after work.", tip: "go shopping" },
@@ -162,7 +162,7 @@
         { cat: "Unit 3: Shopping", zh: "可靠的", word: "reliable (adj.)", sentence: "Choose a reliable supplier for bulk orders.", tip: "supplier / bulk orders 商務採購" },
         { cat: "Unit 3: Shopping", zh: "花費", word: "cost (v./n.)", sentence: "This model costs less than the previous one.", tip: "cost + 金額/比較" },
         { cat: "Unit 3: Shopping", zh: "購買（過去分詞）", word: "purchased (adj./pp.)", sentence: "Purchased items are non-refundable.", tip: "non-refundable 不可退" },
-        { cat: "Unit 3: Shopping", zh: "負擔得起", word: "afford (v.)", sentence: "We can’t afford to buy in large quantities.", tip: "can’t afford to + V" },
+        { cat: "Unit 3: Shopping", zh: "負擔得起", word: "afford (v.)", sentence: "We can't afford to buy in large quantities.", tip: "can't afford to + V" },
         { cat: "Unit 3: Shopping", zh: "出清特賣", word: "sale (n.)", sentence: "The store is having a sale this weekend.", tip: "have a sale" },
         { cat: "Unit 3: Shopping", zh: "半價", word: "50% off (phr.)", sentence: "All jackets are 50% off today.", tip: "% off 折扣表達" },
         { cat: "Unit 3: Shopping", zh: "原價", word: "original price (n.)", sentence: "The original price is listed on the tag.", tip: "be listed on 標示於" },
@@ -172,7 +172,7 @@
         { cat: "Unit 3: Shopping", zh: "大量訂單", word: "bulk order (n.)", sentence: "We offer discounts for bulk orders.", tip: "offer discounts for" },
         { cat: "Unit 3: Shopping", zh: "付款", word: "payment (n.)", sentence: "Payment is due upon receipt of the invoice.", tip: "due upon receipt 一收到就到期" },
 
-        /* --- UNIT 4: Banking  --- */
+        /* --- UNIT 4: Banking --- */
         { cat: "Unit 4: Banking", zh: "保險箱", word: "safety deposit box (n.)", sentence: "Please store valuables in a safety deposit box.", tip: "store valuables 存放貴重物" },
         { cat: "Unit 4: Banking", zh: "銀行櫃員", word: "bank teller (n.)", sentence: "The bank teller verified my ID.", tip: "verify ID 身分核對" },
         { cat: "Unit 4: Banking", zh: "簽名", word: "signature (n.)", sentence: "Your signature is required on the form.", tip: "be required 必須" },
@@ -187,7 +187,7 @@
         { cat: "Unit 4: Banking", zh: "申請", word: "application (n.)", sentence: "Submit the loan application by Friday.", tip: "submit the application 送件" },
         { cat: "Unit 4: Banking", zh: "帳單", word: "bill (n.)", sentence: "This bill includes service fees.", tip: "service fees 服務費" },
         { cat: "Unit 4: Banking", zh: "金額", word: "amount (n.)", sentence: "Please enter the amount you want to transfer.", tip: "enter the amount 輸入金額" },
-        { cat: "Unit 4: Banking", zh: "貸款", word: "loan (n.)", sentence: "We’re talking about a loan for a new car.", tip: "a loan for + 目的" },
+        { cat: "Unit 4: Banking", zh: "貸款", word: "loan (n.)", sentence: "We're talking about a loan for a new car.", tip: "a loan for + 目的" },
         { cat: "Unit 4: Banking", zh: "簽署（文件）", word: "sign (v.)", sentence: "Please sign the forms in front of the officer.", tip: "sign the forms" },
         { cat: "Unit 4: Banking", zh: "表格", word: "form (n.)", sentence: "Fill out this form in capital letters.", tip: "fill out 填寫" },
         { cat: "Unit 4: Banking", zh: "申請表", word: "application form (n.)", sentence: "The application form is missing a signature.", tip: "be missing 缺少" },
@@ -197,14 +197,14 @@
         { cat: "Unit 4: Banking", zh: "利潤", word: "profit (n.)", sentence: "The company reported a profit increase this quarter.", tip: "report a profit increase 財報句" },
         { cat: "Unit 4: Banking", zh: "簽署", word: "sign (n./v.)", sentence: "Please sign here and date it.", tip: "sign and date 簽名＋日期" },
         { cat: "Unit 4: Banking", zh: "交易", word: "transaction (n.)", sentence: "This transaction was declined.", tip: "be declined 被拒絕/未核准" },
-        { cat: "Unit 4: Banking", zh: "轉帳", word: "transfer (n./v.)", sentence: "I’d like to transfer funds to another account.", tip: "transfer funds 轉移資金" },
+        { cat: "Unit 4: Banking", zh: "轉帳", word: "transfer (n./v.)", sentence: "I'd like to transfer funds to another account.", tip: "transfer funds 轉移資金" },
         { cat: "Unit 4: Banking", zh: "帳戶", word: "account (n.)", sentence: "Please open a savings account.", tip: "open an account 開戶" },
-        { cat: "Unit 4: Banking", zh: "存款", word: "deposit (n./v.)", sentence: "I’d like to deposit this check.", tip: "deposit a check 存支票" },
+        { cat: "Unit 4: Banking", zh: "存款", word: "deposit (n./v.)", sentence: "I'd like to deposit this check.", tip: "deposit a check 存支票" },
         { cat: "Unit 4: Banking", zh: "費用", word: "fee (n.)", sentence: "A service fee may apply.", tip: "may apply 可能適用" },
         { cat: "Unit 4: Banking", zh: "付款到期", word: "due (adj.)", sentence: "The payment is due on the 15th.", tip: "be due on + 日期" },
         { cat: "Unit 4: Banking", zh: "幫助/協助", word: "assistance (n.)", sentence: "Contact the branch for further assistance.", tip: "for further 更進一步" },
 
-        /* --- UNIT 5: School  --- */
+        /* --- UNIT 5: School --- */
         { cat: "Unit 5: School", zh: "講座", word: "lecture", sentence: "I went to a lecture about history yesterday.", tip: "去聽一場講座 " },
         { cat: "Unit 5: School", zh: "校園", word: "campus", sentence: "The campus is full of students in the morning.", tip: "校園充滿學生 " },
         { cat: "Unit 5: School", zh: "課本", word: "textbook", sentence: "I bought a new English textbook for class.", tip: "買新的課本 " },
@@ -238,7 +238,7 @@
         { cat: "Unit 5: School", zh: "研討會", word: "seminar", sentence: "We attended a seminar on leadership.", tip: "參加領導力研討會 " },
         { cat: "Unit 5: School", zh: "學費", word: "tuition", sentence: "Tuition must be paid before classes start.", tip: "開學前繳清學費 " },
 
-        /* --- UNIT 6: Housing  --- */
+        /* --- UNIT 6: Housing --- */
         { cat: "Unit 6: Housing", zh: "未附家具的", word: "unfurnished", sentence: "The apartment is unfurnished, so we need to buy all the furniture.", tip: "沒附家具需自己買 " },
         { cat: "Unit 6: Housing", zh: "漏水", word: "leak", sentence: "There's a leak in the ceiling. Call the repair worker now!", tip: "天花板漏水了 " },
         { cat: "Unit 6: Housing", zh: "地下室", word: "basement", sentence: "They turned their basement into a home theater.", tip: "地下室改成電影院 " },
@@ -271,7 +271,7 @@
         { cat: "Unit 6: Housing", zh: "房客/租戶", word: "tenant", sentence: "The tenant takes good care of the apartment.", tip: "房客很愛護公寓 " },
         { cat: "Unit 6: Housing", zh: "公用事業費(水電)", word: "utilities", sentence: "Did you remember to pay the utilities this month?", tip: "記得繳水電費嗎 " },
 
-        /* --- UNIT 7: Transport  --- */
+        /* --- UNIT 7: Transport --- */
         { cat: "Unit 7: Transport", zh: "公車站", word: "bus stop", sentence: "I waited for my friend at the bus stop.", tip: "在公車站等朋友 " },
         { cat: "Unit 7: Transport", zh: "時刻表", word: "timetable", sentence: "The train timetable shows the next train is at 7:30.", tip: "時刻表顯示班次 " },
         { cat: "Unit 7: Transport", zh: "停車收費表", word: "parking meter", sentence: "Don't forget to put coins in the parking meter.", tip: "投硬幣到收費表 " },
@@ -304,7 +304,7 @@
         { cat: "Unit 7: Transport", zh: "轉乘", word: "transfer", sentence: "I need to transfer to another bus at the next stop.", tip: "在下一站轉乘公車 " },
         { cat: "Unit 7: Transport", zh: "車輛", word: "vehicle", sentence: "Bicycles, cars, and buses are all vehicles.", tip: "各種常見的車輛 " },
 
-        /* --- UNIT 8: Factory  --- */
+        /* --- UNIT 8: Factory --- */
         { cat: "Unit 8: Factory", zh: "螺絲", word: "screw", sentence: "The screw is loose on the chair.", tip: "椅子上的螺絲鬆了 " },
         { cat: "Unit 8: Factory", zh: "機械設備", word: "machinery", sentence: "The factory bought new machinery last week.", tip: "工廠買新機械設備 " },
         { cat: "Unit 8: Factory", zh: "管子/管線", word: "pipe", sentence: "Water is leaking from the pipe.", tip: "水從管子漏出來 " },
@@ -336,7 +336,7 @@
         { cat: "Unit 8: Factory", zh: "停機/關閉", word: "shut down", sentence: "The line shut down for maintenance.", tip: "保養而停機 " },
         { cat: "Unit 8: Factory", zh: "供應商", word: "supplier", sentence: "Our supplier delivers every Monday.", tip: "供應商每週一送貨 " },
 
-        /* --- UNIT 9: Medical  --- */
+        /* --- UNIT 9: Medical --- */
         { cat: "Unit 9: Medical", zh: "救護車", word: "ambulance", sentence: "The ambulance arrived in five minutes.", tip: "救護車五分鐘內到 " },
         { cat: "Unit 9: Medical", zh: "病人", word: "patient", sentence: "The patient is waiting for the doctor.", tip: "病人在等醫生 " },
         { cat: "Unit 9: Medical", zh: "手術", word: "surgery", sentence: "She had heart surgery last year.", tip: "去年做心臟手術 " },
@@ -369,14 +369,13 @@
         { cat: "Unit 9: Medical", zh: "嘔吐", word: "vomit", sentence: "He felt sick and vomited.", tip: "不舒服而嘔吐 " },
         { cat: "Unit 9: Medical", zh: "病房", word: "ward", sentence: "She stayed in the hospital ward for two weeks.", tip: "在病房住兩週 " }
     ];
-    //
 
     let questions = [...initialQuestions].sort(() => Math.random() - 0.5);
     let currentQ = {};
 
     function loadQuestion() {
         if (questions.length === 0) {
-            document.querySelector('.container').innerHTML = "<h1>🎉 全部練習完成！</h1><p>270 個多益單字已全部解鎖！</p><button onclick='location.reload()' style='background:var(--primary-blue); color:white; padding:10px 20px; border-radius:8px;'>重新開始</button>";
+            document.querySelector('.container').innerHTML = "<h1>🎉 全部練習完成！</h1><p>270 個多益單字已全部解鎖！</p><button onclick='location.reload()' style='background:var(--primary-blue); color:white; padding:10px 20px; border:none; border-radius:8px;'>重新開始</button>";
             return;
         }
         currentQ = questions.shift();
