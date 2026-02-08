@@ -7,30 +7,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Gentium+Plus&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --primary-blue: #1e2a47; --accent-gold: #d4af37; --bg-main: #f4f7f9; }
-        
-        /* 隱藏預設游標 */
         * { cursor: none !important; } 
 
-        /* 修正圓形游標：提高 z-index 確保不被遮擋 */
         #mibi-cursor {
-            position: fixed;
-            width: 65px;
-            height: 65px;
+            position: fixed; width: 65px; height: 65px;
             background-image: url('mibi_happy.png');
-            background-size: cover;
-            background-position: center;
-            border-radius: 50%;
-            border: 3px solid white;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            pointer-events: none;
-            z-index: 10000; /* 確保在最頂層 */
+            background-size: cover; background-position: center; border-radius: 50%;
+            border: 3px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            pointer-events: none; z-index: 99999; /* 確保游標在最頂層 */
             transform: translate(-50%, -50%);
             transition: transform 0.05s ease-out;
-            will-change: transform;
         }
 
         body { font-family: 'Gentium Plus', 'Noto Sans TC', sans-serif; background-color: var(--bg-main); display: flex; flex-direction: column; align-items: center; min-height: 100vh; margin: 0; }
-        .container { background-color: #fff; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 600px; text-align: center; margin-top: 5vh; position: relative; z-index: 1; }
+        .container { background-color: #fff; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 600px; text-align: center; margin-top: 5vh; position: relative; z-index: 10; }
         header h1 { color: var(--primary-blue); font-size: 1.8rem; margin-bottom: 5px; }
         .calc-tag { color: var(--accent-gold); font-weight: bold; font-size: 0.9rem; margin-bottom: 20px; }
         .badge { background-color: var(--primary-blue); color: white; padding: 5px 12px; border-radius: 15px; font-size: 0.85em; }
@@ -40,12 +30,10 @@
         .sentence { font-size: 1.1em; color: #555; margin-bottom: 15px; line-height: 1.5; }
         .tip { font-size: 0.9em; background-color: #fff3cd; color: #856404; padding: 8px 12px; border-radius: 6px; display: inline-block; }
         .btn-group { margin-top: 30px; display: flex; gap: 10px; justify-content: center; }
-        button { padding: 12px 20px; font-size: 1em; border: none; border-radius: 8px; font-weight: bold; }
+        button { padding: 12px 20px; font-size: 1em; border: none; border-radius: 8px; font-weight: bold; transition: 0.2s; }
         .btn-show { background-color: #28a745; color: white; width: 100%; }
-        .btn-speak { background-color: var(--accent-gold); color: white; width: 100%; margin-bottom: 15px; }
-        
         footer { margin-top: auto; padding: 40px 20px; text-align: center; color: #7f8c8d; font-size: 0.9rem; width: 100%; }
-        .fb-link { color: var(--primary-blue); text-decoration: none; font-weight: bold; border-bottom: 2px solid var(--accent-gold); transition: 0.3s; }
+        .fb-link { color: var(--primary-blue); text-decoration: none; font-weight: bold; border-bottom: 2px solid var(--accent-gold); }
     </style>
 </head>
 <body>
@@ -64,7 +52,7 @@
     <div id="answer-box" class="answer-area">
         <div id="en-word" class="english-word"></div>
         <div id="en-sentence" class="sentence"></div>
-        <button class="btn-speak" onclick="speakText()">🔊 播放發音 (Listen)</button>
+        <button onclick="speakText()" style="background:var(--accent-gold); color:white; width:100%; margin-bottom:15px; border-radius:8px; padding:10px; font-weight:bold;">🔊 播放發音</button>
         <div id="en-tip" class="tip"></div>
     </div>
     <div class="btn-group">
@@ -82,16 +70,13 @@
 </footer>
 
 <script>
-    // 游標控制：修正卡住問題
     const cursor = document.getElementById('mibi-cursor');
     document.addEventListener('mousemove', (e) => {
-        cursor.style.left = e.clientX + 'px';
-        cursor.style.top = e.clientY + 'px';
+        cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px';
     });
 
-    // 270 題完整資料庫
     const initialQuestions = [
-        /* --- UNIT 1-4 原有資料 --- */
+        /* --- UNIT 1: Office --- */
         { cat: "Unit 1: Office", zh: "夾板", word: "clipboard (n.)", sentence: "Please sign the form on the clipboard.", tip: "sign + form 文件簽名" },
         { cat: "Unit 1: Office", zh: "迴紋針", word: "paper clip (n.)", sentence: "Attach the receipt with a paper clip.", tip: "attach A with B 用B把A夾起來" },
         { cat: "Unit 1: Office", zh: "檔案櫃", word: "file cabinet (n.)", sentence: "The contracts are stored in the file cabinet.", tip: "be stored in 存放在" },
@@ -123,7 +108,7 @@
         { cat: "Unit 1: Office", zh: "會議", word: "meeting (n.)", sentence: "The meeting has been moved to Friday.", tip: "be moved to 改期到" },
         { cat: "Unit 1: Office", zh: "期限", word: "deadline (n.)", sentence: "Please submit the report before the deadline.", tip: "submit the report 交報告" },
 
-        // Unit 2
+        /* --- UNIT 2: Travel  --- */
         { cat: "Unit 2: Travel", zh: "行李箱", word: "suitcase (n.)", sentence: "The airline lost my suitcase during the transfer.", tip: "airline lost + luggage 常見抱怨句" },
         { cat: "Unit 2: Travel", zh: "走道", word: "aisle (n.)", sentence: "Could I have an aisle seat, please?", tip: "aisle seat / window seat" },
         { cat: "Unit 2: Travel", zh: "點心", word: "snack (n.)", sentence: "Snacks are available on board.", tip: "available on board 機上用語" },
@@ -155,7 +140,7 @@
         { cat: "Unit 2: Travel", zh: "剩下/仍然", word: "remain (v.)", sentence: "Only three seats remain on this flight.", tip: "seats remain 常見公告" },
         { cat: "Unit 2: Travel", zh: "訂位", word: "reservation (n.)", sentence: "Did you make a hotel reservation?", tip: "make a reservation" },
 
-        // Unit 3
+        /* --- UNIT 3: Shopping  --- */
         { cat: "Unit 3: Shopping", zh: "條碼", word: "barcode (n.)", sentence: "The cashier scanned the barcode.", tip: "scan + barcode 收銀流程" },
         { cat: "Unit 3: Shopping", zh: "顧客", word: "customer (n.)", sentence: "Customers can return items within 7 days.", tip: "within 7 days 退貨政策" },
         { cat: "Unit 3: Shopping", zh: "價格", word: "price (n.)", sentence: "The price includes tax.", tip: "include tax 稅已含" },
@@ -187,7 +172,7 @@
         { cat: "Unit 3: Shopping", zh: "大量訂單", word: "bulk order (n.)", sentence: "We offer discounts for bulk orders.", tip: "offer discounts for" },
         { cat: "Unit 3: Shopping", zh: "付款", word: "payment (n.)", sentence: "Payment is due upon receipt of the invoice.", tip: "due upon receipt 一收到就到期" },
 
-        // Unit 4
+        /* --- UNIT 4: Banking  --- */
         { cat: "Unit 4: Banking", zh: "保險箱", word: "safety deposit box (n.)", sentence: "Please store valuables in a safety deposit box.", tip: "store valuables 存放貴重物" },
         { cat: "Unit 4: Banking", zh: "銀行櫃員", word: "bank teller (n.)", sentence: "The bank teller verified my ID.", tip: "verify ID 身分核對" },
         { cat: "Unit 4: Banking", zh: "簽名", word: "signature (n.)", sentence: "Your signature is required on the form.", tip: "be required 必須" },
@@ -217,7 +202,7 @@
         { cat: "Unit 4: Banking", zh: "存款", word: "deposit (n./v.)", sentence: "I’d like to deposit this check.", tip: "deposit a check 存支票" },
         { cat: "Unit 4: Banking", zh: "費用", word: "fee (n.)", sentence: "A service fee may apply.", tip: "may apply 可能適用" },
         { cat: "Unit 4: Banking", zh: "付款到期", word: "due (adj.)", sentence: "The payment is due on the 15th.", tip: "be due on + 日期" },
-        { cat: "Unit 4: Banking", zh: "幫助/協助", word: "assistance (n.)", sentence: "Contact the branch for further assistance.", tip: "for further 更進一步" }
+        { cat: "Unit 4: Banking", zh: "幫助/協助", word: "assistance (n.)", sentence: "Contact the branch for further assistance.", tip: "for further 更進一步" },
 
         /* --- UNIT 5: School  --- */
         { cat: "Unit 5: School", zh: "講座", word: "lecture", sentence: "I went to a lecture about history yesterday.", tip: "去聽一場講座 " },
@@ -384,13 +369,14 @@
         { cat: "Unit 9: Medical", zh: "嘔吐", word: "vomit", sentence: "He felt sick and vomited.", tip: "不舒服而嘔吐 " },
         { cat: "Unit 9: Medical", zh: "病房", word: "ward", sentence: "She stayed in the hospital ward for two weeks.", tip: "在病房住兩週 " }
     ];
+    //
 
     let questions = [...initialQuestions].sort(() => Math.random() - 0.5);
     let currentQ = {};
 
     function loadQuestion() {
         if (questions.length === 0) {
-            document.querySelector('.container').innerHTML = "<h1>🎉 全部完成！</h1><p>270 個多益單字你都練習過了！</p><button onclick='location.reload()' style='background:var(--primary-blue); color:white; padding:10px 20px; border:none; border-radius:8px;'>重新開始</button>";
+            document.querySelector('.container').innerHTML = "<h1>🎉 全部練習完成！</h1><p>270 個多益單字已全部解鎖！</p><button onclick='location.reload()' style='background:var(--primary-blue); color:white; padding:10px 20px; border-radius:8px;'>重新開始</button>";
             return;
         }
         currentQ = questions.shift();
@@ -399,7 +385,7 @@
         document.getElementById('counter').textContent = `剩餘: ${questions.length + 1}`;
         document.getElementById('en-word').textContent = currentQ.word;
         document.getElementById('en-sentence').textContent = currentQ.sentence;
-        document.getElementById('en-tip').textContent = `💡 認知提示：${currentQ.tip}`;
+        document.getElementById('en-tip').textContent = currentQ.tip;
         document.getElementById('answer-box').style.display = 'none';
         document.getElementById('btn-reveal').style.display = 'block';
         document.getElementById('action-btns').style.display = 'none';
@@ -413,9 +399,9 @@
 
     function speakText() {
         window.speechSynthesis.cancel();
-        let utterance = new SpeechSynthesisUtterance(`${currentQ.word}. ${currentQ.sentence}`);
-        utterance.lang = 'en-US'; utterance.rate = 0.85;
-        window.speechSynthesis.speak(utterance);
+        let utter = new SpeechSynthesisUtterance(`${currentQ.word}. ${currentQ.sentence}`);
+        utter.lang = 'en-US'; utter.rate = 0.85;
+        window.speechSynthesis.speak(utter);
     }
 
     function markUnknown() { questions.push(currentQ); loadQuestion(); }
